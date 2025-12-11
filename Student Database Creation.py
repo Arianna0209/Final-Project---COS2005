@@ -1,6 +1,8 @@
 # Program to create the student database. We still have to add the table and data, I'm just
 # making the program to share through GitHub to make sure that works on my end as well.
 
+#Logan Gibson was virtually here
+
 import sqlite3
 
 def main():
