@@ -10,9 +10,9 @@ def main():
 
     cursor = conn.cursor()
 
-    # Create the table here
+    cur.execute('''CREATE TABLE Students'''
 
-    # Insert the data here
+    student_list = []
 
     conn.commit()
 
