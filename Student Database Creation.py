@@ -17,7 +17,7 @@ def main():
 
     cur.execute('''DROP TABLE IF EXISTS Students''')
 
-    cur.execute('''CREATE TABLE Students (Student_ID INTEGER NOT NULL, Name TEXT NOT NULL, Graduation_Year INTEGER, 
+    cur.execute('''CREATE TABLE Students (Student_ID PRIMARY KEY INTEGER NOT NULL, Name TEXT NOT NULL, Graduation_Year INTEGER, 
                 Primary_Major TEXT, Hometown TEXT, Email TEXT, Student_Type TEXT, Campus_Status TEXT)''')
 
     # Call the populate_table function to add the student data to the table.
