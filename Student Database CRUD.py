@@ -152,16 +152,22 @@ def display_profile(name):
     conn = None
     results = []
     try:
-        conn = sqlite3.connect('phonebook.db')
+        conn = sqlite3.connect('students.db')
         cur = conn.cursor()
-        cur.execute(''' SELECT * FROM Entries
+        cur.execute(''' SELECT * FROM Students
                     WHERE lower(Name) == ?''',
                     (name.lower(),))
         results = cur.fetchall()
         for row in results:
             print(f'ID: {row[0]:<3}\n'
                   f'Name: {row[1]:<15}\n' 
-                  f'Phone Number: {row[2]:<6}')
+                  f'Graduation Year: {row[2]:<6}\n'
+                  f'Major: {row[3]}\n'
+                  f'Hometown: {row[4]}\n'
+                  f'Email: {row[5]}\n'
+                  f'Student Type: {row[6]}\n'
+                  f'Campus Status: {row[7]}')
+                 
     except sqlite3.Error as err:
         print('Database Error, err')
     finally:
@@ -221,3 +227,4 @@ def delete_row(id):
 if __name__ == '__main__':
 
     main()
+
