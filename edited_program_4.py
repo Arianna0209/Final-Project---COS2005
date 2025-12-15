@@ -99,8 +99,7 @@ class StudentDatabaseGUI:
     def search_database(self):
         print(' ')
 
-# ----------------------------------------------------------------------------------------------------------------------
-# ------------------------------------------------ Needs Modifying Below -----------------------------------------------
+
 
     def add_entry_window(self):
         # Define the function that uses that input to add data to the database.
@@ -288,6 +287,9 @@ class StudentDatabaseGUI:
         campus_status_frame.pack(padx=(0,66), pady=(5, 0))
         
         button_frame.pack(pady=5)
+
+# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------ Needs Modifying Below -----------------------------------------------
          
     def modify_entry_window(self):
         # Define the function that performs the modification.
