@@ -102,7 +102,7 @@ class StudentDatabaseGUI:
 # ----------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------ Needs Modifying Below -----------------------------------------------
 
-     def add_entry_window(self):
+    def add_entry_window(self):
         # Define the function that uses that input to add data to the database.
         def add_entry():
             # Get the student info input.
