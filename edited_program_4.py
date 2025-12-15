@@ -102,30 +102,40 @@ class StudentDatabaseGUI:
 # ----------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------ Needs Modifying Below -----------------------------------------------
 
-    # Define the function that allows the user to add an entry to the database:
-    # Define the function that creates the window and asks for input.
-    def add_entry_window(self):
+     def add_entry_window(self):
         # Define the function that uses that input to add data to the database.
         def add_entry():
-            # Get the name and phone number input.
+            # Get the student info input.
             name = name_entry.get()
-            phone_number = phone_number_entry.get()
+            id = id_entry.get()
+            graduation_year = graduation_year_entry.get()
+            major = major_entry.get()
+            hometown = hometown_entry.get()
+            email = email_entry.get()
+            student_type = student_type_entry.get()
+            campus_status = campus_status_entry.get()
+            
+
+
 
             # Make sure the user entered data in both fields before proceeding, if so:
-            if name != '' and phone_number != '':
+            if name != '':
                 # Insert the data into the database and commit the changes.
-                cursor.execute('''INSERT INTO Entries (Name, PhoneNumber) VALUES (?, ?)''', (name, phone_number))
+                cursor.execute('''INSERT INTO Students (Student_ID, Name, Graduation_Year, Primary_Major, Hometown, Email, Student_Type, Campus_Status) VALUES (?,?,?,?,?,?,?,?)''', 
+                               (id, name, graduation_year, major, hometown, email, student_type, campus_status,))
                 conn.commit()
 
                 # Select the entry from the database to keep the formatting the same as the other items in the listbox.
-                cursor.execute('''SELECT * FROM Entries WHERE EntryID = (SELECT MAX(EntryID) FROM Entries)''')
+                cursor.execute('''SELECT * FROM Students WHERE Student_ID = (SELECT MAX(Student_ID) FROM Students)''')
 
                 # Fetch the entry.
                 row = cursor.fetchone()
 
                 # Insert the entry into the phonebook list and listbox.
-                self.phonebook_listbox.insert(tkinter.END, f'{row[0]:<5}{row[1]:<30}{row[2]:>15}')
-                self.phonebook.append(row)
+                self.students_listbox.insert(tkinter.END, f'{row[0]:<10}\t{row[1]:<86}{row[2]:<17}{row[3]:<95}'
+                                                                  f'{row[4]:<41}{row[5]:<89}{row[6]:<42}{row[7]:21}')
+                self.students_list.append(row)
+                print(self.students_list)
 
                 # Provide a confirmation that the data was successfully entered.
                 tkinter.messagebox.showinfo('Entry Added', 'Entry successfully added')
@@ -141,10 +151,9 @@ class StudentDatabaseGUI:
         add_window = tkinter.Toplevel(self.main_window)
 
         # Provide an instruction label telling the user what to do.
-        instructions = tkinter.Label(add_window, text='Add an entry by typing in a name and phone number in'
-                                                      '\nthe corresponding boxes below.'
-                                                      '\nUse the following phone number format:'
-                                                      '\n111-111-1111')
+        instructions = tkinter.Label(add_window, text='Add an entry by typing in student information in'
+                                                      '\nthe corresponding boxes below.')
+                                                      
 
         # Create the name input section:
         # Create the name entry frame.
@@ -160,20 +169,96 @@ class StudentDatabaseGUI:
         name_label.pack(side='left')
         name_entry.pack(side='left')
 
+        # Create the name input section:
+        # Create the name entry frame.
+        id_frame = tkinter.Frame(add_window)
 
-        # Create the phone number input section:
-        # Create the phone number entry frame.
-        phone_number_frame = tkinter.Frame(add_window)
-
-        # Create the phone number entry label.
-        phone_number_label = tkinter.Label(phone_number_frame, text='Phone Number')
+        # Create the name entry label.
+        id_label = tkinter.Label(id_frame, text='ID')
 
         # Create the input box.
-        phone_number_entry = tkinter.Entry(phone_number_frame)
+        id_entry = tkinter.Entry(id_frame)
 
         # Pack the label and entry widgets.
-        phone_number_label.pack(side='left')
-        phone_number_entry.pack(side='left')
+        id_label.pack(side='left')
+        id_entry.pack(side='left')
+
+
+
+        # Create the phone number input section:
+        # Create the frame.
+        graduation_year_frame = tkinter.Frame(add_window)
+
+        # Create the label for the entry box.
+        graduation_year_label = tkinter.Label(graduation_year_frame, text='Graduation year')
+
+        # Create the entry box.
+        graduation_year_entry = tkinter.Entry(graduation_year_frame)
+
+        # Pack the label and entry widgets.
+        graduation_year_label.pack(side='left')
+        graduation_year_entry.pack(side='left')
+
+        major_frame = tkinter.Frame(add_window)
+
+        # Create the label for the entry box.
+        major_label = tkinter.Label(major_frame, text='Major')
+
+        # Create the entry box.
+        major_entry = tkinter.Entry(major_frame)
+
+        # Pack the label and entry widgets.
+        major_label.pack(side='left')
+        major_entry.pack(side='left')
+
+        hometown_frame = tkinter.Frame(add_window)
+
+        # Create the label for the entry box.
+        hometown_label = tkinter.Label(hometown_frame, text='Hometown')
+
+        # Create the entry box.
+        hometown_entry = tkinter.Entry(hometown_frame)
+
+        # Pack the label and entry widgets.
+        hometown_label.pack(side='left')
+        hometown_entry.pack(side='left')
+
+        email_frame = tkinter.Frame(add_window)
+
+        # Create the label for the entry box.
+        email_label = tkinter.Label(email_frame, text='Email')
+
+        # Create the entry box.
+        email_entry = tkinter.Entry(email_frame)
+
+        # Pack the label and entry widgets.
+        email_label.pack(side='left')
+        email_entry.pack(side='left')
+
+        student_type_frame = tkinter.Frame(add_window)
+
+        # Create the label for the entry box.
+        student_type_label = tkinter.Label(student_type_frame, text='Student Type')
+
+        # Create the entry box.
+        student_type_entry = tkinter.Entry(student_type_frame)
+
+        # Pack the label and entry widgets.
+        student_type_label.pack(side='left')
+        student_type_entry.pack(side='left')
+
+        campus_status_frame = tkinter.Frame(add_window)
+
+        # Create the label for the entry box.
+        campus_status_label = tkinter.Label(campus_status_frame, text='Campus Status')
+
+        # Create the entry box.
+        campus_status_entry = tkinter.Entry(campus_status_frame)
+
+        # Pack the label and entry widgets.
+        campus_status_label.pack(side='left')
+        campus_status_entry.pack(side='left')
+
 
 
         # Create the button section:
@@ -193,13 +278,17 @@ class StudentDatabaseGUI:
 
         # Pack all the widgets.
         instructions.pack()
-        name_frame.pack(pady=(5, 0))
-        phone_number_frame.pack(pady=(0, 5))
+        id_frame.pack(pady=(5, 0))
+        name_frame.pack(padx=(0,20), pady=(5, 0))
+        graduation_year_frame.pack(padx=(0,73), pady=(5, 0))
+        major_frame.pack(padx=(0,20), pady=(5, 0))
+        hometown_frame.pack(padx=(0,48),pady=(5, 0))
+        email_frame.pack(padx=(0,16), pady=(5, 0))
+        student_type_frame.pack(padx=(0,57), pady=(5, 0))
+        campus_status_frame.pack(padx=(0,66), pady=(5, 0))
+        
         button_frame.pack(pady=5)
-
-
-    # Define the function that allows the user to modify data in the database:
-    # Define the function that creates the window.
+         
     def modify_entry_window(self):
         # Define the function that performs the modification.
         def modify_entry():
