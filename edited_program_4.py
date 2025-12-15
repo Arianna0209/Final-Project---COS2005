@@ -131,8 +131,8 @@ class StudentDatabaseGUI:
                 row = cursor.fetchone()
 
                 # Insert the entry into the phonebook list and listbox.
-                self.students_listbox.insert(tkinter.END, f'{row[0]:<10}\t{row[1]:<86}{row[2]:<17}{row[3]:<95}'
-                                                                  f'{row[4]:<41}{row[5]:<89}{row[6]:<42}{row[7]:21}')
+                self.students_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
+                                                      f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
                 self.students_list.append(row)
                 print(self.students_list)
 
