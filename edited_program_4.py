@@ -287,33 +287,60 @@ class StudentDatabaseGUI:
         campus_status_frame.pack(padx=(0,66), pady=(5, 0))
         
         button_frame.pack(pady=5)
-
-# ----------------------------------------------------------------------------------------------------------------------
-# ------------------------------------------------ Needs Modifying Below -----------------------------------------------
-         
+        
     def modify_entry_window(self):
         # Define the function that performs the modification.
         def modify_entry():
             # Get the primary key (aka the index for the database) for the entry in the database
             # (index is defined in the modify_entry_window function).
-            db_index = int((self.phonebook_listbox.get(index)).split(' ')[0])
+            db_index = int((self.students_listbox.get(index)).split(' ')[0])
 
             # Get the name and phone number input.
             name = name_entry.get()
-            phone_number = phone_number_entry.get()
+            graduation_year = graduation_year_entry.get()
+            major = major_entry.get()
+            hometown = hometown_entry.get()
+            email = email_entry.get()
+            student_type = student_type_entry.get()
+            campus_status = campus_status_entry.get()
+            
 
             # Update the name in the database entry if the user enters a name.
+            entered = False
+
             if name != '':
-                cursor.execute('''UPDATE Entries SET Name=? WHERE EntryID=?''', (name, db_index))
+                cursor.execute('''UPDATE Students SET Name=? WHERE Student_ID=?''', (name, db_index))
+                entered = True
 
             # Update the phone number in the database entry if the user enters one.
-            elif phone_number != '':
-                cursor.execute('''UPDATE Entries SET PhoneNumber=? WHERE EntryID=?''', (phone_number, db_index))
+            if graduation_year != '':
+                cursor.execute('''UPDATE Students SET Graduation_Year=? WHERE Student_ID=?''', (graduation_year, db_index))
+                entered = True
 
-            # If the user leaves both fields blank:
-            else:
+            if major != '':
+                cursor.execute('''UPDATE Students SET Primary_Major=? WHERE Student_ID=?''', (major, db_index))
+                entered = True
+
+            if hometown != '':
+                cursor.execute('''UPDATE Students SET Hometown=? WHERE Student_ID=?''', (hometown, db_index))
+                entered = True
+
+            if email != '':
+                cursor.execute('''UPDATE Students SET Email=? WHERE Student_ID=?''', (email, db_index))
+                entered = True
+
+            if student_type != '':
+                cursor.execute('''UPDATE Students SET Student_Type=? WHERE Student_ID=?''', (student_type, db_index))
+                entered = True
+
+            if campus_status != '':
+                cursor.execute('''UPDATE Students SET Campus_Status=? WHERE Student_ID=?''', (campus_status, db_index))
+                entered = True
+
+            # If the user leaves all fields blank:
+            if entered == False:
                 # Show an error message asking them to fill in at lease one of the fields.
-                tkinter.messagebox.showerror('Error', 'Please enter a name and/or phone number.')
+                tkinter.messagebox.showerror('Error', 'Please enter information to change.')
 
                 # Exit the modify_entry function to allow the user to try again.
                 return
@@ -322,18 +349,19 @@ class StudentDatabaseGUI:
             conn.commit()
 
             # Select the entry from the database to keep the formatting the same as the other items in the listbox.
-            cursor.execute('''SELECT * FROM Entries WHERE EntryID = ?''', (db_index,))
+            cursor.execute('''SELECT * FROM Students WHERE Student_ID = ?''', (db_index,))
 
             # Fetch the row.
             row = cursor.fetchone()
 
             # Delete the corresponding listbox and phonebook list item.
-            self.phonebook_listbox.delete(index)
-            del self.phonebook[index]
+            self.students_listbox.delete(index)
+            del self.students[index]
 
             # Replace the deleted listbox and phonebook list item with a new one containing the updated data.
-            self.phonebook_listbox.insert(index, f'{row[0]:<5}{row[1]:<30}{row[2]:>15}')
-            self.phonebook.insert(index, row)
+            self.students_listbox.insert(index, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
+                                                      f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
+            self.students.insert(index, row)
 
             # Provide a confirmation that the data was successfully entered.
             tkinter.messagebox.showinfo('Entry Modified', 'Entry successfully modified')
@@ -341,10 +369,9 @@ class StudentDatabaseGUI:
             # Close the modify window.
             modify_window.destroy()
 
-
         # Make sure the user chose an entry to modify, otherwise an error will occur:
         # Get the user's selection.
-        selection = self.phonebook_listbox.curselection()
+        selection = self.students_listbox.curselection()
 
         # Ensure the selection is not an empty tuple. If not:
         if selection != ():
@@ -359,19 +386,18 @@ class StudentDatabaseGUI:
             # Exit the function so the user can make a selection.
             return
 
-
         # Create a window that will allow the user to enter a new name and/or phone number.
         modify_window = tkinter.Toplevel(self.main_window)
 
         # Add instructions to tell the user what to do.
-        instructions = tkinter.Label(modify_window, text='Modify the following entry by typing in a different name'
-                                                         '\nand/or a different phone number in the corresponding boxes below.'
-                                                         '\nUse the following phone number format:'
-                                                         '\n111-111-1111')
+        instructions = tkinter.Label(modify_window, text="Modify the student's info by typing"
+                                                         '\nin the corresponding boxes below.')
+                                                         
 
         # Show the current name and phone number to the user so they know what they're changing.
-        current_info = tkinter.Label(modify_window, text=f'Current name: {(self.phonebook[index])[1]} '
-                                                         f'\nCurrent phone number: {(self.phonebook[index])[2]}')
+        current_info = tkinter.Label(modify_window, text=f'ID: {(self.students[index])[0]}\n'
+                                                         f'Name: {(self.students[index])[1]}\n'
+                                                         f'Class of: {(self.students[index])[2]}')
 
         # Create the name input section:
         # Create the frame.
@@ -387,21 +413,93 @@ class StudentDatabaseGUI:
         name_label.pack(side='left')
         name_entry.pack(side='left')
 
+        # Create the ID input section:
+        # Create the name entry frame.
+        id_frame = tkinter.Frame(modify_window)
 
-        # Create the phone number input section:
-        # Create the frame.
-        phone_number_frame = tkinter.Frame(modify_window)
+        # Create the name entry label.
+        id_label = tkinter.Label(id_frame, text='ID')
 
-        # Create the label for the entry box.
-        phone_number_label = tkinter.Label(phone_number_frame, text='New phone number')
-
-        # Create the entry box.
-        phone_number_entry = tkinter.Entry(phone_number_frame)
+        # Create the input box.
+        id_entry = tkinter.Entry(id_frame)
 
         # Pack the label and entry widgets.
-        phone_number_label.pack(side='left')
-        phone_number_entry.pack(side='left')
+        id_label.pack(side='left')
+        id_entry.pack(side='left')
 
+        # Create the graduation year input section:
+        # Create the frame.
+        graduation_year_frame = tkinter.Frame(modify_window)
+
+        # Create the label for the entry box.
+        graduation_year_label = tkinter.Label(graduation_year_frame, text='Graduation year')
+
+        # Create the entry box.
+        graduation_year_entry = tkinter.Entry(graduation_year_frame)
+
+        # Pack the label and entry widgets.
+        graduation_year_label.pack(side='left')
+        graduation_year_entry.pack(side='left')
+
+        major_frame = tkinter.Frame(modify_window)
+
+        # Create the label for the entry box.
+        major_label = tkinter.Label(major_frame, text='Major')
+
+        # Create the entry box.
+        major_entry = tkinter.Entry(major_frame)
+
+        # Pack the label and entry widgets.
+        major_label.pack(side='left')
+        major_entry.pack(side='left')
+
+        hometown_frame = tkinter.Frame(modify_window)
+
+        # Create the label for the entry box.
+        hometown_label = tkinter.Label(hometown_frame, text='Hometown')
+
+        # Create the entry box.
+        hometown_entry = tkinter.Entry(hometown_frame)
+
+        # Pack the label and entry widgets.
+        hometown_label.pack(side='left')
+        hometown_entry.pack(side='left')
+
+        email_frame = tkinter.Frame(modify_window)
+
+        # Create the label for the entry box.
+        email_label = tkinter.Label(email_frame, text='Email')
+
+        # Create the entry box.
+        email_entry = tkinter.Entry(email_frame)
+
+        # Pack the label and entry widgets.
+        email_label.pack(side='left')
+        email_entry.pack(side='left')
+
+        student_type_frame = tkinter.Frame(modify_window)
+
+        # Create the label for the entry box.
+        student_type_label = tkinter.Label(student_type_frame, text='Student Type')
+
+        # Create the entry box.
+        student_type_entry = tkinter.Entry(student_type_frame)
+
+        # Pack the label and entry widgets.
+        student_type_label.pack(side='left')
+        student_type_entry.pack(side='left')
+
+        campus_status_frame = tkinter.Frame(modify_window)
+
+        # Create the label for the entry box.
+        campus_status_label = tkinter.Label(campus_status_frame, text='Campus Status')
+
+        # Create the entry box.
+        campus_status_entry = tkinter.Entry(campus_status_frame)
+
+        # Pack the label and entry widgets.
+        campus_status_label.pack(side='left')
+        campus_status_entry.pack(side='left')
 
         # Create the buttons:
         # Create a frame for the buttons.
@@ -417,14 +515,23 @@ class StudentDatabaseGUI:
         modify_button.pack(side='left', padx=5)
         cancel_button.pack(side='left', padx=5)
 
-
         # Pack all the widgets.
         instructions.pack(padx=10, pady=5)
         current_info.pack(pady=5)
-        name_frame.pack(pady=(8, 0))
-        phone_number_frame.pack(pady=(0, 10))
+        id_frame.pack(pady=(5, 0))
+        name_frame.pack(padx=(0, 45), pady=(5, 0))
+        graduation_year_frame.pack(padx=(0,73), pady=(5, 0))
+        major_frame.pack(padx=(0,20), pady=(5, 0))
+        hometown_frame.pack(padx=(0,48),pady=(5, 0))
+        email_frame.pack(padx=(0,16), pady=(5, 0))
+        student_type_frame.pack(padx=(0,57), pady=(5, 0))
+        campus_status_frame.pack(padx=(0,66), pady=(5, 0))
         button_frame.pack(pady=5)
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------ Needs Modifying Below -----------------------------------------------
+        
     # Define the function that allows the user to delete data in the database:
     # Define the confirmation window in case the user misclicks.
     def deletion_confirmation(self):
