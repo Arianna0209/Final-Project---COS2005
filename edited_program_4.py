@@ -460,18 +460,25 @@ class StudentDatabaseGUI:
     def add_entry_window(self):
         # Define the function that uses that input to add data to the database.
         def add_entry():
+            
+            #Find the current maximum ID to make the new ID
+            cursor.execute('''SELECT * FROM Students WHERE Student_ID = (SELECT MAX(Student_ID) FROM Students)''')
+
+            # Fetch the entry.
+            row = cursor.fetchone()
+            max_id = row[0]
+
             # Get the student info input.
             name = name_entry.get()
-            id = id_entry.get()
+            id = int(max_id) + 1
             graduation_year = graduation_year_entry.get()
             major = major_entry.get()
             hometown = hometown_entry.get()
             email = email_entry.get()
             student_type = student_type_entry.get()
             campus_status = campus_status_entry.get()
+
             
-
-
 
             # Make sure the user entered data in both fields before proceeding, if so:
             if name != '':
@@ -487,6 +494,7 @@ class StudentDatabaseGUI:
                 row = cursor.fetchone()
 
                 # Insert the entry into the phonebook list and listbox.
+
                 self.students_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
                                                       f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
                 self.students.append(row)
@@ -499,7 +507,7 @@ class StudentDatabaseGUI:
 
             # If the user left one or both fields blank, show and error messagebox and ask them to re-enter.
             else:
-                tkinter.messagebox.showerror('Error', 'Please enter a name and phone number.')
+                tkinter.messagebox.showerror('Error', 'Please enter a name and ID.')
 
         # Create the window that will ask for input.
         add_window = tkinter.Toplevel(self.main_window)
@@ -525,20 +533,6 @@ class StudentDatabaseGUI:
 
         # Create the name input section:
         # Create the name entry frame.
-        id_frame = tkinter.Frame(add_window)
-
-        # Create the name entry label.
-        id_label = tkinter.Label(id_frame, text='ID')
-
-        # Create the input box.
-        id_entry = tkinter.Entry(id_frame)
-
-        # Pack the label and entry widgets.
-        id_label.pack(side='left')
-        id_entry.pack(side='left')
-
-
-
         # Create the phone number input section:
         # Create the frame.
         graduation_year_frame = tkinter.Frame(add_window)
@@ -632,7 +626,6 @@ class StudentDatabaseGUI:
 
         # Pack all the widgets.
         instructions.pack()
-        id_frame.pack(pady=(5, 0))
         name_frame.pack(padx=(0,20), pady=(5, 0))
         graduation_year_frame.pack(padx=(0,73), pady=(5, 0))
         major_frame.pack(padx=(0,20), pady=(5, 0))
@@ -660,12 +653,14 @@ class StudentDatabaseGUI:
             campus_status = campus_status_entry.get()
             
 
+            # Update the name in the database entry if the user enters a name.
             entered = False
 
             if name != '':
                 cursor.execute('''UPDATE Students SET Name=? WHERE Student_ID=?''', (name, db_index))
                 entered = True
 
+            # Update the phone number in the database entry if the user enters one.
             if graduation_year != '':
                 cursor.execute('''UPDATE Students SET Graduation_Year=? WHERE Student_ID=?''', (graduation_year, db_index))
                 entered = True
@@ -692,7 +687,7 @@ class StudentDatabaseGUI:
 
             # If the user leaves all fields blank:
             if entered == False:
-                # Show an error message asking them to fill in at lease one of the fields.
+                # Show an error message asking them to fill in at least one of the fields.
                 tkinter.messagebox.showerror('Error', 'Please enter information to change.')
 
                 # Exit the modify_entry function to allow the user to try again.
@@ -714,6 +709,8 @@ class StudentDatabaseGUI:
             # Replace the deleted listbox and phonebook list item with a new one containing the updated data.
             self.students_listbox.insert(index, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
                                                       f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
+            
+            print(int(index))
             self.students.insert(index, row)
 
             # Provide a confirmation that the data was successfully entered.
@@ -765,20 +762,6 @@ class StudentDatabaseGUI:
         # Pack the label and entry widgets.
         name_label.pack(side='left')
         name_entry.pack(side='left')
-
-        # Create the ID input section:
-        # Create the name entry frame.
-        id_frame = tkinter.Frame(modify_window)
-
-        # Create the name entry label.
-        id_label = tkinter.Label(id_frame, text='ID')
-
-        # Create the input box.
-        id_entry = tkinter.Entry(id_frame)
-
-        # Pack the label and entry widgets.
-        id_label.pack(side='left')
-        id_entry.pack(side='left')
 
         # Create the graduation year input section:
         # Create the frame.
@@ -871,7 +854,7 @@ class StudentDatabaseGUI:
         # Pack all the widgets.
         instructions.pack(padx=10, pady=5)
         current_info.pack(pady=5)
-        id_frame.pack(pady=(5, 0))
+        # id_frame.pack(pady=(5, 0))
         name_frame.pack(padx=(0, 45), pady=(5, 0))
         graduation_year_frame.pack(padx=(0,73), pady=(5, 0))
         major_frame.pack(padx=(0,20), pady=(5, 0))
