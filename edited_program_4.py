@@ -205,6 +205,8 @@ class StudentDatabaseGUI:
             search_instruction_label.pack()
 
             # Create the entry boxes based on the selected criteria:
+           
+            entered = False
             if id_var.get() == 1:
                 # Create the ID entry:
                 # Create a frame.
@@ -222,6 +224,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 id_entry_frame.pack()
+                entered = True
 
 
             if name_var.get() == 1:
@@ -241,6 +244,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 name_entry_frame.pack()
+                entered = True
 
 
             if grad_var.get() == 1:
@@ -260,6 +264,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 grad_entry_frame.pack()
+                entered = True
 
 
             if major_var.get() == 1:
@@ -279,6 +284,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 major_entry_frame.pack()
+                entered = True
 
 
             if hometown_var.get() == 1:
@@ -298,6 +304,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 hometown_entry_frame.pack()
+                entered = True
 
 
             if email_var.get() == 1:
@@ -317,6 +324,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 email_entry_frame.pack()
+                entered = True
 
 
             if type_var.get() == 1:
@@ -336,6 +344,7 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 type_entry_frame.pack()
+                entered = True
 
 
             if campus_status_var.get() == 1:
@@ -347,7 +356,7 @@ class StudentDatabaseGUI:
                 campus_status_label = tkinter.Label(campus_status_entry_frame, text='Campus Status')
 
                 # Create an entry widget.
-                campus_status_entry = tkinter.Entry(cmapus_status_entry_frame)
+                campus_status_entry = tkinter.Entry(campus_status_entry_frame)
 
                 # Pack the widgets.
                 campus_status_label.pack(side='left')
@@ -355,9 +364,10 @@ class StudentDatabaseGUI:
 
                 # Pack the frame.
                 campus_status_entry_frame.pack()
+                entered = True
 
 
-            else:
+            if entered == False:
                 # Create an error window since the user did not select a criteria.
                 tkinter.messagebox.showerror('Error', 'Please select a criteria to search by.')
 
