@@ -74,7 +74,7 @@ class StudentDatabaseGUI:
         self.add_button = tkinter.Button(self.button_frame, text='Add Entry', command=self.add_entry_window)
         self.modify_button = tkinter.Button(self.button_frame, text='Modify Entry', command=self.modify_entry_window)
         self.delete_button = tkinter.Button(self.button_frame, text='Delete Entry', command=self.deletion_confirmation)
-        self.search_button = tkinter.Button(self.button_frame, text='Search Database', command=self.search_database)
+        self.search_button = tkinter.Button(self.button_frame, text='Search Database', command=self.search_criteria_selection_window)
 
         # Pack the buttons.
         self.add_button.pack(side='left', padx=5)
@@ -95,9 +95,365 @@ class StudentDatabaseGUI:
         # Call the tkinter mainloop.
         tkinter.mainloop()
 
-    #### I have to put this here for now so that the search button will appear. ####
-    def search_database(self):
-        print(' ')
+    # Define the function that will allow the user to search the database:
+    # Define the function that will allow the user to select criteria to search by.
+    def search_criteria_selection_window(self):
+        # Define the function that will allow the user to enter the criteria they would like to search by.
+        def search():
+            # Define the function that will allow the user to search the database by their criteria and edit the results.
+            def search_database():
+                # Get the input values
+                id = id_entry.get()
+                name = name_entry.get()
+                grad = grad_entry.get()
+                major = major_entry.get()
+                hometown = hometown_entry.get()
+                email = email_entry.get()
+                type = type_entry.get()
+                campus_status = campus_status_entry.get()
+
+                # Make a list of input values.
+                input_list = [id, name, grad, major, hometown, email, type, campus_status]
+
+                # Set the integer values to zero instead of none to avoid SQL expecting an integer and getting none.
+                if input_list[0] is None:
+                    input_list[0] = 0
+
+                if input_list[2] is None:
+                    input_list[2] = 0
+
+                # Create a search database window.
+                search_database_window = tkinter.Toplevel(search_window)
+
+                # Show the user the criteria they entered:
+                # Create a frame.
+                criteria_entered_frame = tkinter.Frame(search_database_window)
+
+                # Create a label.
+                entries_containing_label = tkinter.Label(criteria_entered_frame, text='Entries containing: ')
+
+                # Pack the label.
+                entries_containing_label.pack(side='left')
+
+                # Remind the user of the search criteria they entered.
+                for input in input_list:
+                    # Make sure the user entered something for that criteria.
+                    if input is not None:
+                        input_label = tkinter.Label(criteria_entered_frame, text=f'\"{input}\", ')
+
+                        input_label.pack(side='left')
+
+                # Create a label with instructions for editing their searched data.
+                searched_data_instructions = tkinter.Label(criteria_entered_frame,
+                                                           text='Click an entry to modify or delete it, '
+                                                                'otherwise click cancel to return to the search window.')
+
+                # Create a listbox containing the matching database entries:
+                # Create a frame.
+                matching_entries_frame = tkinter.Frame(search_database_window)
+
+                # Create the listbox.
+                matching_entries_listbox = tkinter.Listbox(matching_entries_frame)
+
+
+                # Search the database for the input.
+                cursor.execute('''SELECT * FROM Students WHERE (Student_ID == ?, Name LIKE ?, Graduation_Year == ?, Primary_Major LIKE ?, 
+                                                                Hometown LIKE ?, Email LIKE ?, Student_Type LIKE ?, Campus_Status LIKE ?)''',
+                               (input_list[0], f'%{input_list[1]}%', input_list[2], f'%{input_list[3]}%', f'%{input_list[4]}%',
+                                f'%{input_list[5]}%', f'%{input_list[6]}%', f'%{input_list[7]}%'))
+
+                # Get the matching entries.
+                matching = cursor.fetchall()
+
+                # Add the matching entries to the listbox.
+                for row in matching:
+                    matching_entries_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
+                                                                 f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
+
+                # Create buttons that allow the user to edit the matching entries:
+                # Create the frame.
+                matching_entry_button_frame = tkinter.Frame(search_database_window)
+
+                # Create the modify and delete buttons, which redirect the program to their respective functions.
+                modify_button = tkinter.Button(matching_entry_button_frame, text='Modify Entry',
+                                               command=self.modify_entry_window)
+                delete_button = tkinter.Button(matching_entry_button_frame, text='Delete Entry',
+                                               command=self.deletion_confirmation)
+
+                # Create a cancel button.
+                cancel_database_search_button = tkinter.Button(matching_entry_button_frame, text='Search Database',
+                                                               command=search_database_window.destroy)
+
+                # Pack the buttons.
+                modify_button.pack(side='left', padx=5)
+                delete_button.pack(side='left', padx=5)
+                cancel_database_search_button.pack()
+
+                # Pack the frames.
+                criteria_entered_frame.pack()
+                matching_entries_frame.pack()
+                matching_entry_button_frame.pack()
+
+
+            # Create the window that will allow the user to input data to search.
+            search_window = tkinter.Toplevel(search_criteria_window)
+
+            # Add instructions so the user knows what to do.
+            search_instruction_label = tkinter.Label(search_window, text='Enter the information you would like to '
+                                                                         'search in the boxes below.')
+            # Pack the instruction label.
+            search_instruction_label.pack()
+
+            # Create the entry boxes based on the selected criteria:
+            if id_var.get() == 1:
+                # Create the ID entry:
+                # Create a frame.
+                id_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                id_label = tkinter.Label(id_entry_frame, text='ID')
+
+                # Create an entry widget.
+                id_entry = tkinter.Entry(id_entry_frame)
+
+                # Pack the widgets.
+                id_label.pack(side='left')
+                id_entry.pack(side='left')
+
+                # Pack the frame.
+                id_entry_frame.pack()
+
+
+            if name_var.get() == 1:
+                # Create the name entry:
+                # Create a frame.
+                name_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                name_label = tkinter.Label(name_entry_frame, text='Name')
+
+                # Create an entry widget.
+                name_entry = tkinter.Entry(name_entry_frame)
+
+                # Pack the widgets.
+                name_label.pack(side='left')
+                name_entry.pack(side='left')
+
+                # Pack the frame.
+                name_entry_frame.pack()
+
+
+            if grad_var.get() == 1:
+                # Create the graduation entry:
+                # Create a frame.
+                grad_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                grad_label = tkinter.Label(grad_entry_frame, text='Graduation Year')
+
+                # Create an entry widget.
+                grad_entry = tkinter.Entry(grad_entry_frame)
+
+                # Pack the widgets.
+                grad_label.pack(side='left')
+                grad_entry.pack(side='left')
+
+                # Pack the frame.
+                grad_entry_frame.pack()
+
+
+            if major_var.get() == 1:
+                # Create the primary major entry:
+                # Create a frame.
+                major_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                major_label = tkinter.Label(major_entry_frame, text='Major')
+
+                # Create an entry widget.
+                major_entry = tkinter.Entry(major_entry_frame)
+
+                # Pack the widgets.
+                major_label.pack(side='left')
+                major_entry.pack(side='left')
+
+                # Pack the frame.
+                major_entry_frame.pack()
+
+
+            if hometown_var.get() == 1:
+                # Create the hometown entry:
+                # Create a frame.
+                hometown_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                hometown_label = tkinter.Label(hometown_entry_frame, text='Hometown')
+
+                # Create an entry widget.
+                hometown_entry = tkinter.Entry(hometown_entry_frame)
+
+                # Pack the widgets.
+                hometown_label.pack(side='left')
+                hometown_entry.pack(side='left')
+
+                # Pack the frame.
+                hometown_entry_frame.pack()
+
+
+            if email_var.get() == 1:
+                # Create the email entry:
+                # Create a frame.
+                email_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                email_label = tkinter.Label(email_entry_frame, text='Email')
+
+                # Create an entry widget.
+                email_entry = tkinter.Entry(email_entry_frame)
+
+                # Pack the widgets.
+                email_label.pack(side='left')
+                email_entry.pack(side='left')
+
+                # Pack the frame.
+                email_entry_frame.pack()
+
+
+            if type_var.get() == 1:
+                # Create the student type entry:
+                # Create a frame.
+                type_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                type_label = tkinter.Label(type_entry_frame, text='Student Type')
+
+                # Create an entry widget.
+                type_entry = tkinter.Entry(type_entry_frame)
+
+                # Pack the widgets.
+                type_label.pack(side='left')
+                type_entry.pack(side='left')
+
+                # Pack the frame.
+                type_entry_frame.pack()
+
+
+            if campus_status_var.get() == 1:
+                # Create the campus status entry:
+                # Create a frame.
+                campus_status_entry_frame = tkinter.Frame(search_window)
+
+                # Create a label.
+                campus_status_label = tkinter.Label(campus_status_entry_frame, text='Campus Status')
+
+                # Create an entry widget.
+                campus_status_entry = tkinter.Entry(cmapus_status_entry_frame)
+
+                # Pack the widgets.
+                campus_status_label.pack(side='left')
+                campus_status_entry.pack(side='left')
+
+                # Pack the frame.
+                campus_status_entry_frame.pack()
+
+
+            else:
+                # Create an error window since the user did not select a criteria.
+                tkinter.messagebox.showerror('Error', 'Please select a criteria to search by.')
+
+                # Close the search window.
+                search_window.destroy()
+
+
+            # Create the buttons:
+            # Create the frame.
+            search_button_frame = tkinter.Frame(search_window)
+
+            # Create the continue to search button.
+            search_database_button = tkinter.Button(search_button_frame, text='Search Database', command=search_database)
+
+            # Create the cancel button.
+            cancel_search_button = tkinter.Button(search_button_frame, text='Cancel', command=search_window.destroy)
+
+            # Pack the buttons.
+            search_database_button.pack(side='left', padx=5)
+            cancel_search_button.pack(side='left', padx=5)
+
+            # Pack the button frame.
+            search_button_frame.pack()
+
+
+        # Create the window that will allow the user to choose a search criteria.
+        search_criteria_window = tkinter.Toplevel(self.main_window)
+
+        # Create instructions so the user knows what to do.
+        criteria_instruction_label = tkinter.Label(search_criteria_window, text='Select the criteria you would like to search by below.')
+
+        # Create the search criteria options:
+        # Create the search criteria frame.
+        search_criteria_frame = tkinter.Frame(search_criteria_window)
+
+        # Create the IntVar objects.
+        id_var = tkinter.IntVar()
+        name_var = tkinter.IntVar()
+        grad_var = tkinter.IntVar()
+        major_var = tkinter.IntVar()
+        hometown_var = tkinter.IntVar()
+        email_var = tkinter.IntVar()
+        type_var = tkinter.IntVar()
+        campus_status_var = tkinter.IntVar()
+
+        # Set the IntVar objects to zero.
+        id_var.set(0)
+        name_var.set(0)
+        grad_var.set(0)
+        major_var.set(0)
+        hometown_var.set(0)
+        email_var.set(0)
+        type_var.set(0)
+        campus_status_var.set(0)
+
+        # Create the checkbuttons.
+        id_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='ID', variable=id_var)
+        name_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Name', variable=name_var)
+        grad_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Graduation Year', variable=grad_var)
+        major_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Primary Major', variable=major_var)
+        hometown_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Hometown', variable=hometown_var)
+        email_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Email', variable=email_var)
+        type_checkbutton = tkinter.Checkbutton(search_criteria_frame, text= 'Student Type', variable=type_var)
+        campus_status_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Campus Status', variable=campus_status_var)
+
+        # Pack the checkbuttons.
+        id_checkbutton.pack()
+        name_checkbutton.pack()
+        grad_checkbutton.pack()
+        major_checkbutton.pack()
+        hometown_checkbutton.pack()
+        email_checkbutton.pack()
+        type_checkbutton.pack()
+        campus_status_checkbutton.pack()
+
+
+        # Create the buttons:
+        # Create the frame.
+        button_frame = tkinter.Frame(search_criteria_window)
+
+        # Create the continue to search button.
+        continue_to_search_button = tkinter.Button(button_frame, text='Continue to search', command=search)
+
+        # Create the cancel button.
+        cancel_button = tkinter.Button(button_frame, text='Cancel', command=search_criteria_window.destroy)
+
+        # Pack the buttons.
+        continue_to_search_button.pack(side='left', padx=5)
+        cancel_button.pack(side='left', padx=5)
+
+
+        # Pack the frames and instruction widget.
+        criteria_instruction_label.pack()
+        search_criteria_frame.pack()
+        button_frame.pack()
+
 
 
 
@@ -133,8 +489,7 @@ class StudentDatabaseGUI:
                 # Insert the entry into the phonebook list and listbox.
                 self.students_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
                                                       f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
-                self.students_list.append(row)
-                print(self.students_list)
+                self.students.append(row)
 
                 # Provide a confirmation that the data was successfully entered.
                 tkinter.messagebox.showinfo('Entry Added', 'Entry successfully added')
@@ -305,14 +660,12 @@ class StudentDatabaseGUI:
             campus_status = campus_status_entry.get()
             
 
-            # Update the name in the database entry if the user enters a name.
             entered = False
 
             if name != '':
                 cursor.execute('''UPDATE Students SET Name=? WHERE Student_ID=?''', (name, db_index))
                 entered = True
 
-            # Update the phone number in the database entry if the user enters one.
             if graduation_year != '':
                 cursor.execute('''UPDATE Students SET Graduation_Year=? WHERE Student_ID=?''', (graduation_year, db_index))
                 entered = True
@@ -528,9 +881,6 @@ class StudentDatabaseGUI:
         campus_status_frame.pack(padx=(0,66), pady=(5, 0))
         button_frame.pack(pady=5)
 
-
-# ----------------------------------------------------------------------------------------------------------------------
-# ------------------------------------------------ Needs Modifying Below -----------------------------------------------
         
     # Define the function that allows the user to delete data in the database:
     # Define the confirmation window in case the user misclicks.
@@ -539,15 +889,15 @@ class StudentDatabaseGUI:
         def delete_entry():
             # Get the primary key (aka the index for the database) for the entry in the database
             # (index is defined in the deletion_confirmation function).
-            db_index = int((self.phonebook_listbox.get(index)).split(' ')[0])
+            db_index = int((self.students_listbox.get(index)).split(' ')[0])
 
             # Delete the entry from the database and commit the change.
-            cursor.execute('''DELETE FROM Entries WHERE EntryID=?''', (db_index,))
+            cursor.execute('''DELETE FROM Students WHERE Student_ID=?''', (db_index,))
             conn.commit()
 
             # Delete the entry from the phonebook list and listbox.
-            self.phonebook_listbox.delete(index)
-            del self.phonebook[index]
+            self.students_listbox.delete(index)
+            del self.students[index]
 
             # Provide a confirmation that the data was successfully deleted.
             tkinter.messagebox.showinfo('Entry Deleted', 'Entry successfully deleted')
@@ -558,7 +908,7 @@ class StudentDatabaseGUI:
 
         # Make sure the user chose an entry to delete, otherwise an error will occur:
         # Get the user's selection.
-        selection = self.phonebook_listbox.curselection()
+        selection = self.students_listbox.curselection()
 
         # Ensure the selection is not an empty tuple. If not:
         if selection != ():
@@ -578,7 +928,7 @@ class StudentDatabaseGUI:
 
         # Add the label asking the user if they're sure they'd like to delete the entry.
         confirmation = tkinter.Label(confirmation_window, text='Are you sure you want to delete'
-                                                     f'\n{self.phonebook[index]}')
+                                                     f'\n{self.students[index]}')
 
         # Create the buttons for the user to select:
         # Create the button frame.
@@ -598,6 +948,9 @@ class StudentDatabaseGUI:
         confirmation.pack(padx=5, pady=5)
         button_frame.pack(pady=5)
 
+# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------ Needs Modifying Below -----------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
     # Define the function that will end the program when the user clicks quit:
     # Define the confirmation in case the user misclicks.
