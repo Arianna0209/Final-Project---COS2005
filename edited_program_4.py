@@ -99,10 +99,13 @@ class StudentDatabaseGUI:
     # Define the function that will allow the user to select criteria to search by.
     def search_criteria_selection_window(self):
         # Define the function that will allow the user to enter the criteria they would like to search by.
-        def search():
+       def search():
             # Define the function that will allow the user to search the database by their criteria and edit the results.
             def search_database():
                 # Get the input values
+                #this is where the problem occurs
+                #these don't have values unless the entry box is already created
+                #the better solution might be to just not pack it
                 id = id_entry.get()
                 name = name_entry.get()
                 grad = grad_entry.get()
@@ -111,6 +114,8 @@ class StudentDatabaseGUI:
                 email = email_entry.get()
                 type = type_entry.get()
                 campus_status = campus_status_entry.get()
+
+
 
                 # Make a list of input values.
                 input_list = [id, name, grad, major, hometown, email, type, campus_status]
@@ -138,9 +143,8 @@ class StudentDatabaseGUI:
                 # Remind the user of the search criteria they entered.
                 for input in input_list:
                     # Make sure the user entered something for that criteria.
-                    if input is not None:
+                    if input is not None or input != 0:
                         input_label = tkinter.Label(criteria_entered_frame, text=f'\"{input}\", ')
-
                         input_label.pack(side='left')
 
                 # Create a label with instructions for editing their searched data.
@@ -206,162 +210,165 @@ class StudentDatabaseGUI:
 
             # Create the entry boxes based on the selected criteria:
            
+            # Create the ID entry:
+            # Create a frame.
+            id_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            id_label = tkinter.Label(id_entry_frame, text='ID')
+
+            # Create an entry widget.
+            id_entry = tkinter.Entry(id_entry_frame)
+
+            # Pack the widgets.
+            id_label.pack(side='left')
+            id_entry.pack(side='left')
+
+            # Create the name entry:  
+            # Create a frame.
+            name_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            name_label = tkinter.Label(name_entry_frame, text='Name')
+
+            # Create an entry widget.
+            name_entry = tkinter.Entry(name_entry_frame)
+
+            # Pack the widgets.
+                          
+            
+            name_label.pack(side='left')
+            name_entry.pack(side='left')
+        
+            # Create the graduation entry:
+            # Create a frame.
+            grad_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            grad_label = tkinter.Label(grad_entry_frame, text='Graduation Year')
+
+            # Create an entry widget.
+            grad_entry = tkinter.Entry(grad_entry_frame)
+
+            # Pack the widgets.
+            grad_label.pack(side='left')
+            grad_entry.pack(side='left')
+            
+            # Create the primary major entry:
+            # Create a frame.
+            major_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            major_label = tkinter.Label(major_entry_frame, text='Major')
+
+            # Create an entry widget.
+            major_entry = tkinter.Entry(major_entry_frame)
+
+            # Pack the widgets.
+            major_label.pack(side='left')
+            major_entry.pack(side='left')
+            
+            # Create the hometown entry:
+            # Create a frame.
+            
+            hometown_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            hometown_label = tkinter.Label(hometown_entry_frame, text='Hometown')
+
+            # Create an entry widget.
+            hometown_entry = tkinter.Entry(hometown_entry_frame)
+
+            # Pack the widgets.
+            hometown_label.pack(side='left')
+            hometown_entry.pack(side='left')
+            
+            # Create the email entry:
+            # Create a frame.
+            email_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            email_label = tkinter.Label(email_entry_frame, text='Email')
+
+            # Create an entry widget.
+            email_entry = tkinter.Entry(email_entry_frame)
+
+            # Pack the widgets.
+            email_label.pack(side='left')
+            email_entry.pack(side='left')
+
+            # Create the campus status entry:
+            # Create a frame.
+            campus_status_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            campus_status_label = tkinter.Label(campus_status_entry_frame, text='Campus Status')
+
+            # Create an entry widget.
+            campus_status_entry = tkinter.Entry(campus_status_entry_frame)
+
+            # Pack the widgets.
+            campus_status_label.pack(side='left') 
+            campus_status_entry.pack(side='left')
+
+            # Create the student type entry:
+            # Create a frame.
+            type_entry_frame = tkinter.Frame(search_window)
+
+            # Create a label.
+            type_label = tkinter.Label(type_entry_frame, text='Student Type')
+
+            # Create an entry widget.
+            type_entry = tkinter.Entry(type_entry_frame)
+
+            # Pack the widgets.
+            type_label.pack(side='left')
+            type_entry.pack(side='left')
+
             entered = False
             if id_var.get() == 1:
-                # Create the ID entry:
-                # Create a frame.
-                id_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                id_label = tkinter.Label(id_entry_frame, text='ID')
-
-                # Create an entry widget.
-                id_entry = tkinter.Entry(id_entry_frame)
-
-                # Pack the widgets.
-                id_label.pack(side='left')
-                id_entry.pack(side='left')
-
                 # Pack the frame.
                 id_entry_frame.pack()
                 entered = True
 
 
             if name_var.get() == 1:
-                # Create the name entry:
-                # Create a frame.
-                name_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                name_label = tkinter.Label(name_entry_frame, text='Name')
-
-                # Create an entry widget.
-                name_entry = tkinter.Entry(name_entry_frame)
-
-                # Pack the widgets.
-                name_label.pack(side='left')
-                name_entry.pack(side='left')
-
                 # Pack the frame.
                 name_entry_frame.pack()
                 entered = True
 
 
             if grad_var.get() == 1:
-                # Create the graduation entry:
-                # Create a frame.
-                grad_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                grad_label = tkinter.Label(grad_entry_frame, text='Graduation Year')
-
-                # Create an entry widget.
-                grad_entry = tkinter.Entry(grad_entry_frame)
-
-                # Pack the widgets.
-                grad_label.pack(side='left')
-                grad_entry.pack(side='left')
-
                 # Pack the frame.
                 grad_entry_frame.pack()
                 entered = True
 
 
             if major_var.get() == 1:
-                # Create the primary major entry:
-                # Create a frame.
-                major_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                major_label = tkinter.Label(major_entry_frame, text='Major')
-
-                # Create an entry widget.
-                major_entry = tkinter.Entry(major_entry_frame)
-
-                # Pack the widgets.
-                major_label.pack(side='left')
-                major_entry.pack(side='left')
-
                 # Pack the frame.
                 major_entry_frame.pack()
                 entered = True
 
 
             if hometown_var.get() == 1:
-                # Create the hometown entry:
-                # Create a frame.
-                hometown_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                hometown_label = tkinter.Label(hometown_entry_frame, text='Hometown')
-
-                # Create an entry widget.
-                hometown_entry = tkinter.Entry(hometown_entry_frame)
-
-                # Pack the widgets.
-                hometown_label.pack(side='left')
-                hometown_entry.pack(side='left')
-
                 # Pack the frame.
                 hometown_entry_frame.pack()
                 entered = True
 
 
             if email_var.get() == 1:
-                # Create the email entry:
-                # Create a frame.
-                email_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                email_label = tkinter.Label(email_entry_frame, text='Email')
-
-                # Create an entry widget.
-                email_entry = tkinter.Entry(email_entry_frame)
-
-                # Pack the widgets.
-                email_label.pack(side='left')
-                email_entry.pack(side='left')
-
                 # Pack the frame.
                 email_entry_frame.pack()
                 entered = True
 
 
             if type_var.get() == 1:
-                # Create the student type entry:
-                # Create a frame.
-                type_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                type_label = tkinter.Label(type_entry_frame, text='Student Type')
-
-                # Create an entry widget.
-                type_entry = tkinter.Entry(type_entry_frame)
-
-                # Pack the widgets.
-                type_label.pack(side='left')
-                type_entry.pack(side='left')
-
                 # Pack the frame.
                 type_entry_frame.pack()
                 entered = True
 
 
             if campus_status_var.get() == 1:
-                # Create the campus status entry:
-                # Create a frame.
-                campus_status_entry_frame = tkinter.Frame(search_window)
-
-                # Create a label.
-                campus_status_label = tkinter.Label(campus_status_entry_frame, text='Campus Status')
-
-                # Create an entry widget.
-                campus_status_entry = tkinter.Entry(campus_status_entry_frame)
-
-                # Pack the widgets.
-                campus_status_label.pack(side='left')
-                campus_status_entry.pack(side='left')
-
                 # Pack the frame.
                 campus_status_entry_frame.pack()
                 entered = True
@@ -462,10 +469,7 @@ class StudentDatabaseGUI:
         # Pack the frames and instruction widget.
         criteria_instruction_label.pack()
         search_criteria_frame.pack()
-        button_frame.pack()
-
-
-
+        button_frame.pack(
 
     def add_entry_window(self):
         # Define the function that uses that input to add data to the database.
