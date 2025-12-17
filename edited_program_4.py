@@ -99,7 +99,7 @@ class StudentDatabaseGUI:
     # Define the function that will allow the user to select criteria to search by.
     def search_criteria_selection_window(self):
         # Define the function that will allow the user to enter the criteria they would like to search by.
-       def search():
+        def search():
             # Define the function that will allow the user to search the database by their criteria and edit the results.
             def search_database():
                 # Get the input values
