@@ -1,6 +1,6 @@
 # Title: Student Database CRUD
 # Author: Logan Gibson and Arianna Endres
-# Date: 12/--/2025
+# Date: 12/18/2025
 
 # This program allows users to read, update, and delete data from the student database in a GUI window.
 
@@ -367,43 +367,43 @@ class StudentDatabaseGUI:
 
             if name_var.get() == 1:
                 # Pack the frame.
-                name_entry_frame.pack()
+                name_entry_frame.pack(padx=(0,20), pady=(5, 0))
                 entered = True
 
 
             if grad_var.get() == 1:
                 # Pack the frame.
-                grad_entry_frame.pack()
+                grad_entry_frame.pack(padx=(0,73), pady=(5, 0))
                 entered = True
 
 
             if major_var.get() == 1:
                 # Pack the frame.
-                major_entry_frame.pack()
+                major_entry_frame.pack(padx=(0,20), pady=(5, 0))
                 entered = True
 
 
             if hometown_var.get() == 1:
                 # Pack the frame.
-                hometown_entry_frame.pack()
+                hometown_entry_frame.pack(padx=(0,48),pady=(5, 0))
                 entered = True
 
 
             if email_var.get() == 1:
                 # Pack the frame.
-                email_entry_frame.pack()
+                email_entry_frame.pack(padx=(0,16), pady=(5, 0))
                 entered = True
 
 
             if type_var.get() == 1:
                 # Pack the frame.
-                type_entry_frame.pack()
+                type_entry_frame.pack(padx=(0,57), pady=(5, 0))
                 entered = True
 
 
             if campus_status_var.get() == 1:
                 # Pack the frame.
-                campus_status_entry_frame.pack()
+                campus_status_entry_frame.pack(padx=(0,66), pady=(5, 0))
                 entered = True
 
             # If the user didn't select any search criteria:
