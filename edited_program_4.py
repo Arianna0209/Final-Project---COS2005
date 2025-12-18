@@ -116,12 +116,6 @@ class StudentDatabaseGUI:
                 # Make a list of input values.
                 input_list = [id, name, grad, major, hometown, email, type, campus_status]
 
-                # Set the integer values to zero instead of none to avoid SQL expecting an integer and getting none.
-                if input_list[0] is None:
-                    input_list[0] = 0
-
-                if input_list[2] is None:
-                    input_list[2] = 0
 
                 # Create a search database window.
                 search_database_window = tkinter.Toplevel(search_window)
@@ -139,7 +133,7 @@ class StudentDatabaseGUI:
                 # Remind the user of the search criteria they entered.
                 for input in input_list:
                     # Make sure the user entered something for that criteria.
-                    if input is not None or input != 0:
+                    if input is not '':
                         input_label = tkinter.Label(criteria_entered_frame, text=f'\"{input}\", ')
                         input_label.pack(side='left')
 
@@ -153,46 +147,90 @@ class StudentDatabaseGUI:
                 matching_entries_frame = tkinter.Frame(search_database_window)
 
                 # Create the listbox.
-                matching_entries_listbox = tkinter.Listbox(matching_entries_frame)
+                matching_entries_listbox = tkinter.Listbox(matching_entries_frame, width=60)
 
+                # Pack the listbox.
+                matching_entries_listbox.pack()
+
+                # Create the SQL statement by searching each criterion the user inputted:
+                # Create the initial statement.
+                sql_statement = 'SELECT * FROM Students WHERE '
+
+                # Create a list with the criteria to add.
+                criteria = []
+
+                filled = False
+
+                if id_var.get() == 1:
+                    if input_list[0] != '':
+                        criteria.append(f'(Student_ID = {input_list[0]})')
+                        filled = True
+
+
+                if name_var.get() == 1:
+                    if input_list[1] != '':
+                        criteria.append(f'(Name LIKE \'%{input_list[1]}%\')')
+                        filled = True
+
+                if grad_var.get() == 1:
+                    if input_list[2] != '':
+                        criteria.append(f'(Graduation_Year = {input_list[2]})')
+                        filled = True
+
+                if major_var.get() == 1:
+                    if input_list[3] != '':
+                        criteria.append(f'(Primary_Major LIKE \'%{input_list[3]}%\')')
+                        filled = True
+
+                if hometown_var.get() == 1:
+                    if input_list[4] != '':
+                        criteria.append(f'(Hometown LIKE \'%{input_list[4]}%\')')
+                        filled = True
+
+                if email_var.get() == 1:
+                    if input_list[5] != '':
+                        criteria.append(f'(Email LIKE \'%{input_list[5]}%\')')
+                        filled = True
+
+                if type_var.get() == 1:
+                    if input_list[6] != '':
+                        criteria.append(f'(Student_Type LIKE \'%{input_list[6]}%\')')
+                        filled = True
+
+                if campus_status_var.get() == 1:
+                    if input_list[7] != '':
+                        criteria.append(f'(Campus_Status LIKE \'%{input_list[7]}%\')')
+                        filled = True
+
+                if filled is False:
+                    tkinter.messagebox.showerror('Error', 'Please enter a the critera\nyou would like to search by.')
+                    search_database_window.destroy()
+
+                # Join the criteria with an "OR" and add them to the SQL statement.
+                sql_statement += 'AND'.join(criteria)
 
                 # Search the database for the input.
-                cursor.execute('''SELECT * FROM Students WHERE (Student_ID == ?, Name LIKE ?, Graduation_Year == ?, Primary_Major LIKE ?, 
-                                                                Hometown LIKE ?, Email LIKE ?, Student_Type LIKE ?, Campus_Status LIKE ?)''',
-                               (input_list[0], f'%{input_list[1]}%', input_list[2], f'%{input_list[3]}%', f'%{input_list[4]}%',
-                                f'%{input_list[5]}%', f'%{input_list[6]}%', f'%{input_list[7]}%'))
+                cursor.execute(sql_statement)
 
                 # Get the matching entries.
                 matching = cursor.fetchall()
 
                 # Add the matching entries to the listbox.
                 for row in matching:
-                    matching_entries_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
-                                                                 f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
+                    matching_entries_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}')
 
-                # Create buttons that allow the user to edit the matching entries:
-                # Create the frame.
-                matching_entry_button_frame = tkinter.Frame(search_database_window)
-
-                # Create the modify and delete buttons, which redirect the program to their respective functions.
-                modify_button = tkinter.Button(matching_entry_button_frame, text='Modify Entry',
-                                               command=self.modify_entry_window)
-                delete_button = tkinter.Button(matching_entry_button_frame, text='Delete Entry',
-                                               command=self.deletion_confirmation)
 
                 # Create a cancel button.
-                cancel_database_search_button = tkinter.Button(matching_entry_button_frame, text='Search Database',
+                exit_button = tkinter.Button(search_database_window, text='Exit',
                                                                command=search_database_window.destroy)
 
-                # Pack the buttons.
-                modify_button.pack(side='left', padx=5)
-                delete_button.pack(side='left', padx=5)
-                cancel_database_search_button.pack()
 
                 # Pack the frames.
                 criteria_entered_frame.pack()
-                matching_entries_frame.pack()
-                matching_entry_button_frame.pack()
+                matching_entries_frame.pack(padx=10, pady=10)
+
+                # Pack the button.
+                exit_button.pack(pady=5)
 
 
             # Create the window that will allow the user to input data to search.
@@ -368,8 +406,8 @@ class StudentDatabaseGUI:
                 campus_status_entry_frame.pack()
                 entered = True
 
-            #If the user didn't select any search criteria
-            if entered == False:
+            # If the user didn't select any search criteria:
+            if entered is False:
                 # Create an error window since the user did not select a criteria.
                 tkinter.messagebox.showerror('Error', 'Please select a criteria to search by.')
 
@@ -388,8 +426,8 @@ class StudentDatabaseGUI:
             cancel_search_button = tkinter.Button(search_button_frame, text='Cancel', command=search_window.destroy)
 
             # Pack the buttons.
-            search_database_button.pack(side='left', padx=5)
-            cancel_search_button.pack(side='left', padx=5)
+            search_database_button.pack(side='left', padx=5, pady=5)
+            cancel_search_button.pack(side='left', padx=5, pady=5)
 
             # Pack the button frame.
             search_button_frame.pack()
@@ -436,14 +474,14 @@ class StudentDatabaseGUI:
         campus_status_checkbutton = tkinter.Checkbutton(search_criteria_frame, text='Campus Status', variable=campus_status_var)
 
         # Pack the checkbuttons.
-        id_checkbutton.pack()
-        name_checkbutton.pack()
-        grad_checkbutton.pack()
-        major_checkbutton.pack()
-        hometown_checkbutton.pack()
-        email_checkbutton.pack()
-        type_checkbutton.pack()
-        campus_status_checkbutton.pack()
+        id_checkbutton.pack(anchor='w')
+        name_checkbutton.pack(anchor='w')
+        grad_checkbutton.pack(anchor='w')
+        major_checkbutton.pack(anchor='w')
+        hometown_checkbutton.pack(anchor='w')
+        email_checkbutton.pack(anchor='w')
+        type_checkbutton.pack(anchor='w')
+        campus_status_checkbutton.pack(anchor='w')
 
 
         # Create the buttons:
@@ -457,14 +495,15 @@ class StudentDatabaseGUI:
         cancel_button = tkinter.Button(button_frame, text='Cancel', command=search_criteria_window.destroy)
 
         # Pack the buttons.
-        continue_to_search_button.pack(side='left', padx=5)
-        cancel_button.pack(side='left', padx=5)
+        continue_to_search_button.pack(side='left', padx=5, pady=5)
+        cancel_button.pack(side='left', padx=5, pady=5)
 
 
         # Pack the frames and instruction widget.
         criteria_instruction_label.pack()
         search_criteria_frame.pack()
         button_frame.pack()
+
 
     #Define the function to create the window to add entries
     def add_entry_window(self):
@@ -490,7 +529,7 @@ class StudentDatabaseGUI:
 
             
 
-            # Make sure the user entered data in both fields before proceeding, if so:
+            # Make sure the user entered data in the name field before proceeding, since that field cannot be null.
             if name != '':
                 # Insert the data into the database and commit the changes.
                 cursor.execute('''INSERT INTO Students (Student_ID, Name, Graduation_Year, Primary_Major, Hometown, Email, Student_Type, Campus_Status) VALUES (?,?,?,?,?,?,?,?)''', 
@@ -503,7 +542,7 @@ class StudentDatabaseGUI:
                 # Fetch the entry.
                 row = cursor.fetchone()
 
-                # Insert the entry into the phonebook list and listbox.
+                # Insert the entry into the students list and listbox.
                 self.students_listbox.insert(tkinter.END, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
                                                       f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
                 self.students.append(row)
@@ -658,7 +697,7 @@ class StudentDatabaseGUI:
             # (index is defined in the modify_entry_window function).
             db_index = int((self.students_listbox.get(index)).split(' ')[0])
 
-            # Get the name and phone number input.
+            # Get the user input.
             name = name_entry.get()
             graduation_year = graduation_year_entry.get()
             major = major_entry.get()
@@ -715,11 +754,11 @@ class StudentDatabaseGUI:
             # Fetch the row.
             row = cursor.fetchone()
 
-            # Delete the corresponding listbox and phonebook list item.
+            # Delete the corresponding listbox and students list item.
             self.students_listbox.delete(index)
             del self.students[index]
 
-            # Replace the deleted listbox and phonebook list item with a new one containing the updated data.
+            # Replace the deleted listbox and students list item with a new one containing the updated data.
             self.students_listbox.insert(index, f'{row[0]:<6}{row[1]:<35}{row[2]:<8}{row[3]:<40}'
                                                       f'{row[4]:<20}{row[5]:<35}{row[6]:<20}{row[7]:<20}')
             self.students.insert(index, row)
@@ -747,15 +786,15 @@ class StudentDatabaseGUI:
             # Exit the function so the user can make a selection.
             return
 
-        # Create a window that will allow the user to enter a new name and/or phone number.
+        # Create a window that will allow the user to enter new data.
         modify_window = tkinter.Toplevel(self.main_window)
 
         # Add instructions to tell the user what to do.
-        instructions = tkinter.Label(modify_window, text="Modify the student's info by typing"
-                                                         '\nin the corresponding boxes below.')
+        instructions = tkinter.Label(modify_window, text="Modify the information of the student below by typing"
+                                                         '\nin new information in the corresponding boxes below.')
                                                          
 
-        # Show the current name and phone number to the user so they know what they're changing.
+        # Show the student name, ID, and class to the user so they know what they're changing.
         current_info = tkinter.Label(modify_window, text=f'ID: {(self.students[index])[0]}\n'
                                                          f'Name: {(self.students[index])[1]}\n'
                                                          f'Class of: {(self.students[index])[2]}')
@@ -900,7 +939,7 @@ class StudentDatabaseGUI:
             cursor.execute('''DELETE FROM Students WHERE Student_ID=?''', (db_index,))
             conn.commit()
 
-            # Delete the entry from the phonebook list and listbox.
+            # Delete the entry from the students list and listbox.
             self.students_listbox.delete(index)
             del self.students[index]
 
