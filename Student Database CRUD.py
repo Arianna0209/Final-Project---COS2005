@@ -133,7 +133,7 @@ class StudentDatabaseGUI:
                 # Remind the user of the search criteria they entered.
                 for input in input_list:
                     # Make sure the user entered something for that criteria.
-                    if input is not '':
+                    if input != '':
                         input_label = tkinter.Label(criteria_entered_frame, text=f'\"{input}\", ')
                         input_label.pack(side='left')
 
@@ -159,7 +159,12 @@ class StudentDatabaseGUI:
                 # Create a list with the criteria to add.
                 criteria = []
 
+                # Set the filled variable to false - if this variable remains false by the time it is checked, the user
+                # didn't enter any criteria to search by.
                 filled = False
+
+                # First see if the user chose to search by that criteria, then see if they entered something in the
+                # field:
 
                 if id_var.get() == 1:
                     if input_list[0] != '':
@@ -202,6 +207,7 @@ class StudentDatabaseGUI:
                         criteria.append(f'(Campus_Status LIKE \'%{input_list[7]}%\')')
                         filled = True
 
+                # Check the filled variable.
                 if filled is False:
                     tkinter.messagebox.showerror('Error', 'Please enter a the critera\nyou would like to search by.')
                     search_database_window.destroy()
@@ -223,7 +229,6 @@ class StudentDatabaseGUI:
                 # Create a cancel button.
                 exit_button = tkinter.Button(search_database_window, text='Exit',
                                                                command=search_database_window.destroy)
-
 
                 # Pack the frames.
                 criteria_entered_frame.pack()
@@ -356,8 +361,8 @@ class StudentDatabaseGUI:
             type_label.pack(side='left')
             type_entry.pack(side='left')
 
-            #Evaluate if the user selected criteria or not
-            #Pack the frames for the selected criteria
+            # Evaluate if the user selected criteria or not
+            # Pack the frames for the selected criteria
             entered = False
             if id_var.get() == 1:
                 # Pack the frame.
